@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Countdowns+IP" />
+  <title>Countdowns+IP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      background: #f0f6ff;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      padding: env(safe-area-inset-top, 16px) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    }
+
+    .screen-body {
+      padding: 24px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .screen-header {
+      font-size: 28px;
+      font-weight: 700;
+      color: #2a5078;
+      line-height: 1.2;
+    }
+    .header-plus { color: #6aaad0; }
+    .screen-sub {
+      font-size: 12px;
+      color: #7aaac8;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 2px;
+      margin-bottom: 4px;
+    }
+
+    .event-card {
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-left { flex: 1; }
+    .card-name { font-size: 15px; font-weight: 600; line-height: 1.3; }
+    .card-date-str { font-size: 11px; margin-top: 3px; opacity: 0.72; }
+    .card-right { text-align: center; flex-shrink: 0; }
+    .day-num { font-size: 44px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    .day-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; opacity: 0.72; }
+
+    .theme-rose     { background: #fce0e8; }
+    .theme-rose     .card-name { color: #a02848; } .theme-rose .card-date-str { color: #c04868; } .theme-rose .day-num { color: #801830; } .theme-rose .day-lbl { color: #c04868; }
+    .theme-peach    { background: #fde8d4; }
+    .theme-peach    .card-name { color: #a04820; } .theme-peach .card-date-str { color: #c06840; } .theme-peach .day-num { color: #803010; } .theme-peach .day-lbl { color: #c06840; }
+    .theme-lemon    { background: #fdf6cc; }
+    .theme-lemon    .card-name { color: #807010; } .theme-lemon .card-date-str { color: #a09030; } .theme-lemon .day-num { color: #605000; } .theme-lemon .day-lbl { color: #a09030; }
+    .theme-mint     { background: #d8f4e8; }
+    .theme-mint     .card-name { color: #1a7850; } .theme-mint .card-date-str { color: #3a9870; } .theme-mint .day-num { color: #0a5838; } .theme-mint .day-lbl { color: #3a9870; }
+    .theme-lavender { background: #ece0f8; }
+    .theme-lavender .card-name { color: #6030a0; } .theme-lavender .card-date-str { color: #8050c0; } .theme-lavender .day-num { color: #401880; } .theme-lavender .day-lbl { color: #8050c0; }
+    .theme-sky      { background: #d8eef8; }
+    .theme-sky      .card-name { color: #1a5878; } .theme-sky .card-date-str { color: #3a78a8; } .theme-sky .day-num { color: #0a3858; } .theme-sky .day-lbl { color: #3a78a8; }
+
+    .add-btn {
+      background: #e8f4fc;
+      border: 1px dashed #90bcd8;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      color: #3a80a8;
+      font-size: 15px;
+      cursor: pointer;
+      font-weight: 500;
+      width: 100%;
+    }
+    .add-btn:active { opacity: 0.6; }
+
+    /* overlay / form */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(240,246,255,0.97);
+      display: none;
+      flex-direction: column;
+      padding: calc(env(safe-area-inset-top, 24px) + 24px) 24px 40px;
+      gap: 10px;
+      z-index: 100;
+      overflow-y: auto;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .overlay.open { display: flex; }
+    .overlay-title { font-size: 22px; font-weight: 700; color: #2a5078; margin-bottom: 6px; }
+    .form-label { font-size: 12px; color: #7aaac8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .form-input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #b0cce0;
+      border-radius: 12px;
+      padding: 13px 14px;
+      color: #2a5078;
+      font-size: 16px;
+      outline: none;
+      margin-bottom: 12px;
+      font-family: inherit;
+    }
+    .form-input::placeholder { color: #a0c0d8; }
+    .color-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .color-swatch { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; }
+    .color-swatch.selected { border-color: #2a5078; }
+    .form-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .btn-cancel { background: #e0eef8; border: none; border-radius: 14px; padding: 15px; color: #3a6888; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-save { background: #6aaad0; border: none; border-radius: 14px; padding: 15px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-cancel:active, .btn-save:active { opacity: 0.7; }
+
+    .delete-btn {
+      font-size: 11px;
+      color: #c04868;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px 0 0;
+      font-family: inherit;
+      opacity: 0.7;
+    }
+    .delete-btn:active { opacity: 0.4; }
+  </style>
+</head>
+<body>
+
+<div class="screen-body">
+  <div>
+    <div class="screen-header">Countdowns<span class="header-plus">+IP</span></div>
+    <div class="screen-sub">days remaining</div>
+  </div>
+  <div id="cards-container"></div>
+  <button class="add-btn" onclick="showForm()">+ add event</button>
+</div>
+
+<div class="overlay" id="add-overlay">
+  <div class="overlay-title">New countdown</div>
+  <div class="form-label">Event name</div>
+  <input class="form-input" id="f-name" placeholder="e.g. Schiff — Carnegie" />
+  <div class="form-label">Date</div>
+  <input class="form-input" type="date" id="f-date" />
+  <div class="form-label">Color</div>
+  <div class="color-row">
+    <div class="color-swatch selected" style="background:#f8b8c8;" data-theme="rose" onclick="pickColor(this)"></div>
+    <div class="color-swatch" style="background:#f8c8a0;" data-theme="peach" onclick="pickColor(this)"></div>
+    <div class="color-swatch" style="background:#f8f0a0;" data-theme="lemon" onclick="pickColor(this)"></div>
+    <div class="color-swatch" style="background:#a0e8c8;" data-theme="mint" onclick="pickColor(this)"></div>
+    <div class="color-swatch" style="background:#d0b0f0;" data-theme="lavender" onclick="pickColor(this)"></div>
+    <div class="color-swatch" style="background:#a8d8f0;" data-theme="sky" onclick="pickColor(this)"></div>
+  </div>
+  <div class="form-actions">
+    <button class="btn-cancel" onclick="hideForm()">Cancel</button>
+    <button class="btn-save" onclick="saveEvent()">Save</button>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'countdowns_ip_events';
+
+  const DEFAULTS = [
+    { id: 1, name: 'Wigmore Hall — Lim', date: '2026-10-15', theme: 'mint' },
+    { id: 2, name: 'Wigmore Hall — Lim (2)', date: '2026-10-16', theme: 'sky' },
+    { id: 3, name: 'Uchida — Carnegie', date: '2027-02-01', theme: 'lemon' },
+    { id: 4, name: 'Argerich — Carnegie', date: '2027-04-01', theme: 'rose' },
+    { id: 5, name: 'Lim — Carnegie (closing)', date: '2027-05-11', theme: 'lavender' },
+  ];
+
+  function loadEvents() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : DEFAULTS;
+    } catch { return DEFAULTS; }
+  }
+
+  function saveEvents(events) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); } catch {}
+  }
+
+  let EVENTS = loadEvents();
+  let selectedTheme = 'rose';
+  let nextId = Math.max(...EVENTS.map(e => e.id || 0), 0) + 1;
+
+  function getDays(dateStr) {
+    const target = new Date(dateStr + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return Math.max(0, Math.ceil((target - today) / 86400000));
+  }
+
+  function fmtDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function sanitize(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function renderCards() {
+    const container = document.getElementById('cards-container');
+    container.innerHTML = '';
+    [...EVENTS].sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((ev) => {
+      const days = getDays(ev.date);
+      const card = document.createElement('div');
+      card.className = `event-card theme-${ev.theme}`;
+      card.style.marginBottom = '0';
+
+      const left = document.createElement('div');
+      left.className = 'card-left';
+
+      const name = document.createElement('div');
+      name.className = 'card-name';
+      name.textContent = ev.name;
+
+      const dateStr = document.createElement('div');
+      dateStr.className = 'card-date-str';
+      dateStr.textContent = fmtDate(ev.date);
+
+      const del = document.createElement('button');
+      del.className = 'delete-btn';
+      del.textContent = 'remove';
+      del.onclick = () => deleteEvent(ev.id);
+
+      left.appendChild(name);
+      left.appendChild(dateStr);
+      left.appendChild(del);
+
+      const right = document.createElement('div');
+      right.className = 'card-right';
+      right.innerHTML = `<div class="day-num">${days}</div><div class="day-lbl">days</div>`;
+
+      card.appendChild(left);
+      card.appendChild(right);
+      container.appendChild(card);
+    });
+  }
+
+  function deleteEvent(id) {
+    EVENTS = EVENTS.filter(e => e.id !== id);
+    saveEvents(EVENTS);
+    renderCards();
+  }
+
+  function showForm() { document.getElementById('add-overlay').classList.add('open'); }
+  function hideForm() { document.getElementById('add-overlay').classList.remove('open'); }
+
+  function pickColor(el) {
+    document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTheme = el.dataset.theme;
+  }
+
+  function saveEvent() {
+    const name = document.getElementById('f-name').value.trim();
+    const date = document.getElementById('f-date').value;
+    if (!name || !date) return;
+    EVENTS.push({ id: nextId++, name, date, theme: selectedTheme });
+    saveEvents(EVENTS);
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-date').value = '';
+    hideForm();
+    renderCards();
+  }
+
+  renderCards();
+</script>
+</body>
+</html>
