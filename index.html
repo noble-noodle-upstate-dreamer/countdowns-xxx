@@ -27,21 +27,9 @@
       margin: 0 auto;
     }
 
-    .screen-header {
-      font-size: 28px;
-      font-weight: 700;
-      color: #2a5078;
-      line-height: 1.2;
-    }
+    .screen-header { font-size: 28px; font-weight: 700; color: #2a5078; line-height: 1.2; }
     .header-plus { color: #6aaad0; }
-    .screen-sub {
-      font-size: 12px;
-      color: #7aaac8;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-top: 2px;
-      margin-bottom: 4px;
-    }
+    .screen-sub { font-size: 12px; color: #7aaac8; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; margin-bottom: 4px; }
 
     .event-card {
       border-radius: 18px;
@@ -58,18 +46,41 @@
     .day-num { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
     .day-lbl { display: none; }
 
+    .card-actions { display: flex; gap: 12px; margin-top: 6px; }
+    .edit-btn {
+      font-size: 14px;
+      color: #3a78a8;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0 0;
+      font-family: inherit;
+      opacity: 0.7;
+    }
+    .delete-btn {
+      font-size: 14px;
+      color: #c04868;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 0 0;
+      font-family: inherit;
+      opacity: 0.7;
+    }
+    .edit-btn:active, .delete-btn:active { opacity: 0.4; }
+
     .theme-rose     { background: #fce0e8; }
-    .theme-rose     .card-name { color: #a02848; } .theme-rose .card-date-str { color: #c04868; } .theme-rose .day-num { color: #801830; } .theme-rose .day-lbl { color: #c04868; }
+    .theme-rose     .card-name { color: #a02848; } .theme-rose .card-date-str { color: #c04868; } .theme-rose .day-num { color: #801830; }
     .theme-peach    { background: #fde8d4; }
-    .theme-peach    .card-name { color: #a04820; } .theme-peach .card-date-str { color: #c06840; } .theme-peach .day-num { color: #803010; } .theme-peach .day-lbl { color: #c06840; }
+    .theme-peach    .card-name { color: #a04820; } .theme-peach .card-date-str { color: #c06840; } .theme-peach .day-num { color: #803010; }
     .theme-lemon    { background: #fdf6cc; }
-    .theme-lemon    .card-name { color: #807010; } .theme-lemon .card-date-str { color: #a09030; } .theme-lemon .day-num { color: #605000; } .theme-lemon .day-lbl { color: #a09030; }
+    .theme-lemon    .card-name { color: #807010; } .theme-lemon .card-date-str { color: #a09030; } .theme-lemon .day-num { color: #605000; }
     .theme-mint     { background: #d8f4e8; }
-    .theme-mint     .card-name { color: #1a7850; } .theme-mint .card-date-str { color: #3a9870; } .theme-mint .day-num { color: #0a5838; } .theme-mint .day-lbl { color: #3a9870; }
+    .theme-mint     .card-name { color: #1a7850; } .theme-mint .card-date-str { color: #3a9870; } .theme-mint .day-num { color: #0a5838; }
     .theme-lavender { background: #ece0f8; }
-    .theme-lavender .card-name { color: #6030a0; } .theme-lavender .card-date-str { color: #8050c0; } .theme-lavender .day-num { color: #401880; } .theme-lavender .day-lbl { color: #8050c0; }
+    .theme-lavender .card-name { color: #6030a0; } .theme-lavender .card-date-str { color: #8050c0; } .theme-lavender .day-num { color: #401880; }
     .theme-sky      { background: #d8eef8; }
-    .theme-sky      .card-name { color: #1a5878; } .theme-sky .card-date-str { color: #3a78a8; } .theme-sky .day-num { color: #0a3858; } .theme-sky .day-lbl { color: #3a78a8; }
+    .theme-sky      .card-name { color: #1a5878; } .theme-sky .card-date-str { color: #3a78a8; } .theme-sky .day-num { color: #0a3858; }
 
     .add-btn {
       background: #e8f4fc;
@@ -85,7 +96,6 @@
     }
     .add-btn:active { opacity: 0.6; }
 
-    /* overlay / form */
     .overlay {
       position: fixed;
       inset: 0;
@@ -123,17 +133,31 @@
     .btn-save { background: #6aaad0; border: none; border-radius: 14px; padding: 15px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; }
     .btn-cancel:active, .btn-save:active { opacity: 0.7; }
 
-    .delete-btn {
-      font-size: 11px;
-      color: #c04868;
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px 0 0;
-      font-family: inherit;
-      opacity: 0.7;
+    /* confirm dialog */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
     }
-    .delete-btn:active { opacity: 0.4; }
+    .confirm-overlay.open { display: flex; }
+    .confirm-box {
+      background: #f0f6ff;
+      border-radius: 20px;
+      padding: 28px 24px 20px;
+      max-width: 280px;
+      width: 90%;
+      text-align: center;
+    }
+    .confirm-title { font-size: 17px; font-weight: 700; color: #2a5078; margin-bottom: 8px; }
+    .confirm-msg { font-size: 14px; color: #5a80a0; margin-bottom: 20px; line-height: 1.4; }
+    .confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .btn-keep { background: #e0eef8; border: none; border-radius: 12px; padding: 13px; color: #3a6888; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-delete { background: #e84868; border: none; border-radius: 12px; padding: 13px; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .btn-keep:active, .btn-delete:active { opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -144,11 +168,12 @@
     <div class="screen-sub">days remaining</div>
   </div>
   <div id="cards-container"></div>
-  <button class="add-btn" onclick="showForm()">+ add event</button>
+  <button class="add-btn" onclick="showForm(null)">+ add event</button>
 </div>
 
+<!-- add/edit overlay -->
 <div class="overlay" id="add-overlay">
-  <div class="overlay-title">New countdown</div>
+  <div class="overlay-title" id="overlay-title">New countdown</div>
   <div class="form-label">Event name</div>
   <input class="form-input" id="f-name" placeholder="e.g. Schiff — Carnegie" />
   <div class="form-label">Date</div>
@@ -168,14 +193,26 @@
   </div>
 </div>
 
+<!-- delete confirmation -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title">Remove event?</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="btn-keep" onclick="hideConfirm()">Keep</button>
+      <button class="btn-delete" onclick="confirmDelete()">Remove</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const STORAGE_KEY = 'countdowns_ip_events';
 
   const DEFAULTS = [
     { id: 1, name: 'Wigmore Hall — Lim', date: '2026-10-15', theme: 'mint' },
     { id: 2, name: 'Wigmore Hall — Lim (2)', date: '2026-10-16', theme: 'sky' },
-    { id: 3, name: 'Uchida — Carnegie', date: '2027-02-01', theme: 'lemon' },
-    { id: 4, name: 'Argerich — Carnegie', date: '2027-04-01', theme: 'rose' },
+    { id: 3, name: 'Uchida — Carnegie', date: '2027-02-06', theme: 'lemon' },
+    { id: 4, name: 'Argerich — Carnegie', date: '2027-04-25', theme: 'rose' },
     { id: 5, name: 'Lim — Carnegie (closing)', date: '2027-05-11', theme: 'lavender' },
   ];
 
@@ -193,6 +230,8 @@
   let EVENTS = loadEvents();
   let selectedTheme = 'rose';
   let nextId = Math.max(...EVENTS.map(e => e.id || 0), 0) + 1;
+  let editingId = null;
+  let pendingDeleteId = null;
 
   function getDays(dateStr) {
     const target = new Date(dateStr + 'T00:00:00');
@@ -204,12 +243,6 @@
   function fmtDate(dateStr) {
     const d = new Date(dateStr + 'T00:00:00');
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  function sanitize(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
   }
 
   function renderCards() {
@@ -232,18 +265,31 @@
       dateStr.className = 'card-date-str';
       dateStr.textContent = fmtDate(ev.date);
 
-      const del = document.createElement('button');
-      del.className = 'delete-btn';
-      del.textContent = 'remove';
-      del.onclick = () => deleteEvent(ev.id);
+      const actions = document.createElement('div');
+      actions.className = 'card-actions';
 
+      const editBtn = document.createElement('button');
+      editBtn.className = 'edit-btn';
+      editBtn.textContent = '✏️ edit';
+      editBtn.onclick = (e) => { e.stopPropagation(); showForm(ev.id); };
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.textContent = '✕ remove';
+      delBtn.onclick = (e) => { e.stopPropagation(); askDelete(ev.id, ev.name); };
+
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
       left.appendChild(name);
       left.appendChild(dateStr);
-      left.appendChild(del);
+      left.appendChild(actions);
 
       const right = document.createElement('div');
       right.className = 'card-right';
-      right.innerHTML = `<div class="day-num">${days}</div><div class="day-lbl">days</div>`;
+      const dayNum = document.createElement('div');
+      dayNum.className = 'day-num';
+      dayNum.textContent = days;
+      right.appendChild(dayNum);
 
       card.appendChild(left);
       card.appendChild(right);
@@ -251,14 +297,31 @@
     });
   }
 
-  function deleteEvent(id) {
-    EVENTS = EVENTS.filter(e => e.id !== id);
-    saveEvents(EVENTS);
-    renderCards();
+  function showForm(id) {
+    editingId = id;
+    document.getElementById('overlay-title').textContent = id ? 'Edit countdown' : 'New countdown';
+    if (id) {
+      const ev = EVENTS.find(e => e.id === id);
+      if (!ev) return;
+      document.getElementById('f-name').value = ev.name;
+      document.getElementById('f-date').value = ev.date;
+      selectedTheme = ev.theme;
+      document.querySelectorAll('.color-swatch').forEach(s => {
+        s.classList.toggle('selected', s.dataset.theme === ev.theme);
+      });
+    } else {
+      document.getElementById('f-name').value = '';
+      document.getElementById('f-date').value = '';
+      selectedTheme = 'rose';
+      document.querySelectorAll('.color-swatch').forEach((s, i) => s.classList.toggle('selected', i === 0));
+    }
+    document.getElementById('add-overlay').classList.add('open');
   }
 
-  function showForm() { document.getElementById('add-overlay').classList.add('open'); }
-  function hideForm() { document.getElementById('add-overlay').classList.remove('open'); }
+  function hideForm() {
+    document.getElementById('add-overlay').classList.remove('open');
+    editingId = null;
+  }
 
   function pickColor(el) {
     document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
@@ -270,12 +333,35 @@
     const name = document.getElementById('f-name').value.trim();
     const date = document.getElementById('f-date').value;
     if (!name || !date) return;
-    EVENTS.push({ id: nextId++, name, date, theme: selectedTheme });
+    if (editingId) {
+      const idx = EVENTS.findIndex(e => e.id === editingId);
+      if (idx !== -1) EVENTS[idx] = { id: editingId, name, date, theme: selectedTheme };
+    } else {
+      EVENTS.push({ id: nextId++, name, date, theme: selectedTheme });
+    }
     saveEvents(EVENTS);
-    document.getElementById('f-name').value = '';
-    document.getElementById('f-date').value = '';
     hideForm();
     renderCards();
+  }
+
+  function askDelete(id, name) {
+    pendingDeleteId = id;
+    document.getElementById('confirm-msg').textContent = `Remove "${name}"?`;
+    document.getElementById('confirm-overlay').classList.add('open');
+  }
+
+  function hideConfirm() {
+    document.getElementById('confirm-overlay').classList.remove('open');
+    pendingDeleteId = null;
+  }
+
+  function confirmDelete() {
+    if (pendingDeleteId !== null) {
+      EVENTS = EVENTS.filter(e => e.id !== pendingDeleteId);
+      saveEvents(EVENTS);
+      renderCards();
+    }
+    hideConfirm();
   }
 
   renderCards();
